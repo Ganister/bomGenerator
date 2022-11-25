@@ -1,0 +1,166 @@
+<html>
+
+<head>
+  <title>dataLoader</title>
+
+</head>
+
+<body>
+  <h1>Data Generator</h1>
+  <div id="cy" style="height: 100vh;
+width: 100vw;
+"></div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.23.0/cytoscape.min.js"
+  integrity="sha512-gEWKnYYa1/1c3jOuT9PR7NxiVI1bwn02DeJGsl+lMVQ1fWMNvtjkjxIApTdbJ/wcDjQmbf+McWahXwipdC9bGA=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://unpkg.com/dagre@0.7.4/dist/dagre.js"></script>
+<script src="cytoscape-dagre.js"></script>
+<script>
+
+
+  // read cyNodes.json
+  var cyNodes = [];
+  var cyEdges = [];
+  const layoutOptions = {
+    name: 'dagre',
+  };
+
+  var cy = cytoscape({
+    layout: layoutOptions,
+    container: document.getElementById('cy'),
+    elements: {
+      nodes: [],
+      edges: []
+    },
+    style: [
+      {
+        selector: 'node',
+        style: {
+          'label': 'data(weight)',
+          width: 150,
+          height: 150,
+        }
+      },
+      {
+        selector: 'node[?top]',
+        style: {
+          'background-color': '#FF0000',
+          'label': 'data(weight)'
+        }
+      },
+      {
+        selector: ':selected',
+        style: {
+          'border-color': '#337ab7',
+          'border-width': 8,
+        }
+      },
+      {
+        selector: 'node.source',
+        style: {
+          'border-color': '#22AA66',
+          'border-width': 5,
+        }
+      },
+      {
+        selector: 'edge',
+        style: {
+          'display': 'element',
+          'curve-style': 'bezier',
+          'taxi-direction': 'horizontal',
+          'taxi-turn': '200px',
+          'taxi-turn-min-distance': '60px',
+          width: 5,
+          'label': 'data(label)',
+          'text-rotation': 'autorotate',
+          'target-arrow-shape': 'triangle',
+          'line-color': 'data(edgeColor)',
+          'target-arrow-color': 'data(edgeColor)',
+          'source-arrow-color': 'data(edgeColor)',
+          'arrow-scale': '2',
+          'text-margin-y': '-25px',
+          'font-size': '26px',
+        }
+      },
+      {
+        selector: 'edge.undirected',
+        style: {
+          'target-arrow-shape': 'circle',
+          'source-arrow-shape': 'circle',
+          'arrow-scale': '1',
+        }
+      },
+      {
+        selector: '.hidden',
+        style: {
+          'visibility': 'hidden',
+        }
+      },
+      {
+        selector: 'edge.inbound',
+        style: {
+          'width': 15,
+          'line-color': '#5bc0de',
+          'target-arrow-color': '#5bc0de',
+          'source-arrow-color': '#5bc0de',
+        }
+      },
+      {
+        selector: 'edge.outbound',
+        style: {
+          'width': 15,
+          'line-color': '#5cb85c',
+          'target-arrow-color': '#5cb85c',
+          'source-arrow-color': '#5cb85c',
+        }
+      },
+      {
+        selector: 'node.outbound',
+        style: {
+          'border-color': '#d9534f',
+          'border-width': 3,
+        }
+      },
+      {
+        selector: 'node.inbound',
+        style: {
+          'border-color': '#f0ad4e',
+          'border-width': 3,
+        }
+      },
+      {
+        selector: 'node.hl',
+        style: {
+          'border-color': '#FF0000',
+          'border-width': 10,
+        }
+      }
+    ],
+  });
+
+
+
+  // read data from dataloader/cyNodes.json 
+  // and dataloader/cyEdges.json
+  // and create a graph
+  fetch('./output/cyNodes.json')
+    .then((response) => response.json())
+    .then((json) => {
+      console.log("LOG / file: dataLoader.html / line 56 / .then / json", json);
+      cy.add(json);
+    });
+
+  fetch('./output/cyEdges.json')
+    .then((response) => response.json())
+    .then((json) => {
+      console.log("LOG / file: dataLoader.html / line 62 / .then / json", json);
+      cy.add(json);
+      cy.layout(layoutOptions).run();
+    });
+
+// find loops
+
+</script>
+
+</html>
